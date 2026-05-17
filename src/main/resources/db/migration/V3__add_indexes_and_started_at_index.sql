@@ -1,0 +1,1 @@
+CREATE INDEX idx_tasks_status_started_at ON tasks (status, started_at);

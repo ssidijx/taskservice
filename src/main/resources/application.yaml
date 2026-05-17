@@ -41,6 +41,9 @@ app:
   worker:
     pool-size: 4
     poll-delay-ms: 1000
+  watchdog:
+    stuck-threshold-ms: 30000
+    poll-delay-ms: 10000
   kafka:
     topic:
       tasks: tasks

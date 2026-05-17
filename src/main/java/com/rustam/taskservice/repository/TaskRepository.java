@@ -6,11 +6,13 @@ import jakarta.persistence.LockModeType;
 import jakarta.persistence.QueryHint;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Repository
@@ -27,4 +29,14 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
             LIMIT 1
             """)
     Optional<Task> findAndLockFirstByStatus(@Param("status") TaskStatus status);
+
+    @Modifying
+    @Query("""
+            UPDATE Task t
+            SET t.status = com.rustam.taskservice.model.TaskStatus.NEW,
+                t.startedAt = NULL
+            WHERE t.status = com.rustam.taskservice.model.TaskStatus.IN_PROGRESS
+              AND t.startedAt < :threshold
+            """)
+    int resetStuckTasks(@Param("threshold") Instant threshold);
 }
