@@ -7,6 +7,13 @@ spring:
     username: taskuser
     password: taskpass
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 5000
+      idle-timeout: 300000
+      max-lifetime: 1800000
+      pool-name: TaskServiceHikariCP
 
   jpa:
     hibernate:
@@ -37,6 +44,10 @@ spring:
 server:
   port: 8080
 
+logging:
+    pattern:
+      level: "%5p [taskId=%X{taskId:-}]"
+
 app:
   worker:
     pool-size: 4
@@ -47,3 +58,12 @@ app:
   kafka:
     topic:
       tasks: tasks
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
